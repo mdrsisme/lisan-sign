@@ -3,12 +3,17 @@ import { supabaseAdmin } from "@/lib/supabase";
 import { uploadToCloudinary } from "@/lib/cloudinary";
 import { ApiResponse } from "@/types/api";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params;
+
     const { data, error } = await supabaseAdmin
       .from("announcements")
       .select("*")
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
     if (error) {
@@ -32,8 +37,12 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params;
     const formData = await req.formData();
     const updates: any = {};
 
@@ -67,7 +76,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const { data, error } = await supabaseAdmin
       .from("announcements")
       .update(updates)
-      .eq("id", params.id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -87,12 +96,17 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
+    const { id } = await params;
+    
     const { error } = await supabaseAdmin
       .from("announcements")
       .delete()
-      .eq("id", params.id);
+      .eq("id", id);
 
     if (error) throw error;
 
